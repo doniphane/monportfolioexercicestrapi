@@ -1,89 +1,134 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 
+/**
+ * Composant React pour un formulaire de contact.
+ * Il permet d'envoyer un message par EmailJS et d'enregistrer les données dans Strapi.
+ *
+ * @component
+ * @returns {JSX.Element} Le formulaire de contact rendu
+ */
 export default function ContactForm() {
-    const [formData, setFormData] = useState({
-        user_name: '',
-        user_email: '',
-        subject: '',
-        message: '',
-    });
-
+    /** Référence au formulaire HTML */
     const formRef = useRef();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    /** État du message de confirmation ou d'erreur */
+    const [status, setStatus] = useState({
+        /** Message de succès (null si aucun) */
+        success: null,
+        /** Message d'erreur (null si aucun) */
+        error: null,
+    });
 
-    const handleSubmit = async (e) => {
+    /**
+     * Gère la soumission du formulaire :
+     * - Valide les champs
+     * - Enregistre les données dans Strapi
+     * - Envoie un e-mail via EmailJS
+     *
+     * @async
+     * @param {React.FormEvent<HTMLFormElement>} e - Événement de soumission du formulaire
+     */
+    const sendEmail = async (e) => {
         e.preventDefault();
 
+        const form = formRef.current;
+        const formData = new FormData(form);
+        const user_name = formData.get('user_name');
+        const user_email = formData.get('user_email');
+        const subject = formData.get('subject');
+        const message = formData.get('message');
+
+        // Validation simple
+        if (!user_name || !user_email || !subject || !message) {
+            setStatus({ error: 'Tous les champs sont requis.', success: null });
+            return;
+        }
+
         try {
-            const result = await emailjs.sendForm(
+            // Enregistrement dans Strapi
+            const response = await fetch('http://localhost:1337/api/contacts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: {
+                        name: user_name,
+                        email: user_email,
+                        subject: subject,
+                        message: message,
+                        date: new Date().toISOString(), // correspond au champ "date" dans Strapi
+                    },
+                }),
+            });
+
+            if (!response.ok) throw new Error("Erreur lors de l'enregistrement dans Strapi");
+
+            // Envoi du message via EmailJS
+            await emailjs.sendForm(
                 import.meta.env.VITE_EMAILJS_SERVICE_ID,
                 import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-                formRef.current,
+                form,
                 import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
 
-            console.log('Message envoyé avec succès:', result.text);
-            setFormData({
-                user_name: '',
-                user_email: '',
-                subject: '',
-                message: '',
-            });
-        } catch (error) {
-            console.error('Erreur lors de l\'envoi:', error.text);
+            setStatus({ success: 'Message envoyé avec succès !', error: null });
+            form.reset(); // Réinitialise le formulaire
+        } catch (err) {
+            setStatus({ error: err.message || 'Une erreur est survenue.', success: null });
         }
     };
 
     return (
-        <form ref={formRef} onSubmit={handleSubmit} className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
+        <form
+            ref={formRef}
+            onSubmit={sendEmail}
+            className="max-w-md mx-auto p-4 bg-white shadow-md rounded"
+        >
             <h2 className="text-xl font-bold mb-4">Formulaire de contact</h2>
 
+            {status.error && <p className="text-red-500 mb-2">{status.error}</p>}
+            {status.success && <p className="text-green-500 mb-2">{status.success}</p>}
+
             <label className="block mb-2">
-                Nom:
+                Nom :
                 <input
                     type="text"
                     name="user_name"
-                    value={formData.user_name}
-                    onChange={handleChange}
                     className="w-full p-2 border rounded"
+                    required
                 />
             </label>
 
             <label className="block mb-2">
-                Email:
+                Email :
                 <input
                     type="email"
                     name="user_email"
-                    value={formData.user_email}
-                    onChange={handleChange}
                     className="w-full p-2 border rounded"
+                    required
                 />
             </label>
 
             <label className="block mb-2">
-                Sujet:
+                Sujet :
                 <input
                     type="text"
                     name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
                     className="w-full p-2 border rounded"
+                    required
                 />
             </label>
 
             <label className="block mb-4">
-                Message:
+                Message :
                 <textarea
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
                     rows={5}
-                />
+                    className="w-full p-2 border rounded"
+                    required
+                ></textarea>
             </label>
 
             <button

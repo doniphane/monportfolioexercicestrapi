@@ -1,8 +1,26 @@
 import { useState } from 'react';
 
+/**
+ * Composant qui affiche une liste filtrable de projets par catégorie.
+ *
+ * @component
+ * @param {Object} props - Les propriétés du composant
+ * @param {Array<Object>} props.projets - Liste des projets à afficher
+ * @param {number} props.projets[].id - Identifiant unique du projet
+ * @param {string} props.projets[].title - Titre du projet
+ * @param {string} props.projets[].description - Description du projet
+ * @param {string} props.projets[].link - Lien vers le projet
+ * @param {Object} props.projets[].cover - Image de couverture du projet
+ * @param {Object} props.projets[].cover.formats - Formats de l’image
+ * @param {Object} props.projets[].cover.formats.medium - Format medium de l’image
+ * @param {string} props.projets[].cover.formats.medium.url - URL de l’image
+ * @param {Array<Object>} props.projets[].categories - Catégories du projet
+ * @param {number} props.projets[].categories[].id - ID de la catégorie
+ * @param {string} props.projets[].categories[].name - Nom de la catégorie
+ * @returns {JSX.Element} Composant avec filtre par catégorie et affichage des projets
+ */
 function CategoryFilter({ projets }) {
     const [selectedCategory, setSelectedCategory] = useState('Toutes');
-
 
     const categories = [
         'Toutes',
@@ -10,7 +28,6 @@ function CategoryFilter({ projets }) {
             projets.flatMap((projet) => projet.categories.map((cat) => cat.name))
         ),
     ];
-
 
     const filteredProjets =
         selectedCategory === 'Toutes'
@@ -33,7 +50,6 @@ function CategoryFilter({ projets }) {
                     </option>
                 ))}
             </select>
-
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                 {filteredProjets.map((projet) => (
