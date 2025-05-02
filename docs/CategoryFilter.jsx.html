@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: CategoryFilter.jsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: CategoryFilter.jsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState } from 'react';
+
+/**
+ * Composant qui affiche une liste filtrable de projets par catégorie.
+ *
+ * @component
+ * @param {Object} props - Les propriétés du composant
+ * @param {Array&lt;Object>} props.projets - Liste des projets à afficher
+ * @param {number} props.projets[].id - Identifiant unique du projet
+ * @param {string} props.projets[].title - Titre du projet
+ * @param {string} props.projets[].description - Description du projet
+ * @param {string} props.projets[].link - Lien vers le projet
+ * @param {Object} props.projets[].cover - Image de couverture du projet
+ * @param {Object} props.projets[].cover.formats - Formats de l’image
+ * @param {Object} props.projets[].cover.formats.medium - Format medium de l’image
+ * @param {string} props.projets[].cover.formats.medium.url - URL de l’image
+ * @param {Array&lt;Object>} props.projets[].categories - Catégories du projet
+ * @param {number} props.projets[].categories[].id - ID de la catégorie
+ * @param {string} props.projets[].categories[].name - Nom de la catégorie
+ * @returns {JSX.Element} Composant avec filtre par catégorie et affichage des projets
+ */
+function CategoryFilter({ projets }) {
+    const [selectedCategory, setSelectedCategory] = useState('Toutes');
+
+    const categories = [
+        'Toutes',
+        ...new Set(
+            projets.flatMap((projet) => projet.categories.map((cat) => cat.name))
+        ),
+    ];
+
+    const filteredProjets =
+        selectedCategory === 'Toutes'
+            ? projets
+            : projets.filter((projet) =>
+                projet.categories.some((cat) => cat.name === selectedCategory)
+            );
+
+    return (
+        &lt;div className="flex flex-col items-center">
+
+            &lt;select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="mb-8 p-2 rounded-md bg-white text-black shadow-md"
+            >
+                {categories.map((categorie) => (
+                    &lt;option key={categorie} value={categorie}>
+                        {categorie}
+                    &lt;/option>
+                ))}
+            &lt;/select>
+
+            &lt;div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                {filteredProjets.map((projet) => (
+                    &lt;div
+                        key={projet.id}
+                        className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-500"
+                    >
+                        &lt;img
+                            src={`http://localhost:1337${projet.cover.formats.medium.url}`}
+                            alt={projet.title}
+                            className="w-full h-56 object-cover"
+                        />
+                        &lt;div className="p-6">
+                            &lt;h2 className="text-2xl font-bold text-gray-800 mb-2">{projet.title}&lt;/h2>
+                            &lt;p className="text-gray-600 mb-4">{projet.description}&lt;/p>
+
+                            &lt;div className="flex flex-wrap gap-2 mb-4">
+                                {projet.categories.map((categorie) => (
+                                    &lt;span
+                                        key={categorie.id}
+                                        className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full"
+                                    >
+                                        {categorie.name}
+                                    &lt;/span>
+                                ))}
+                            &lt;/div>
+
+                            &lt;a
+                                href={projet.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-2 rounded-full hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 text-sm font-semibold"
+                            >
+                                Voir le projet
+                            &lt;/a>
+                        &lt;/div>
+                    &lt;/div>
+                ))}
+            &lt;/div>
+        &lt;/div>
+    );
+}
+
+export default CategoryFilter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="CategoryFilter.html">CategoryFilter</a></li><li><a href="module.exports.html">exports</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 02 2025 15:00:45 GMT+0400 (heure de La Réunion)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
