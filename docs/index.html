@@ -43,15 +43,138 @@
 
 
     <section>
-        <article><h1>React + Vite</h1>
-<p>This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.</p>
-<p>Currently, two official plugins are available:</p>
+        <article><p><img src="https://github.com/doniphane/monportfolioexercicestrapi/public/1.png" alt="Contact form screenshot"></p>
+<h1>🌐 My Portfolio – Contact Form Integration (Strapi + EmailJS)</h1>
+<p>This project is a personal portfolio built with <strong>React</strong>, styled using <strong>Tailwind CSS</strong>, and powered by a <strong>Strapi CMS</strong> backend.<br>
+It includes a fully functional <strong>contact form</strong> that:</p>
 <ul>
-<li><a href="https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react">@vitejs/plugin-react</a> uses <a href="https://babeljs.io/">Babel</a> for Fast Refresh</li>
-<li><a href="https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc">@vitejs/plugin-react-swc</a> uses <a href="https://swc.rs/">SWC</a> for Fast Refresh</li>
+<li>Sends an email using <strong>EmailJS</strong></li>
+<li>Stores the message in the <strong>Strapi API database</strong></li>
 </ul>
-<h2>Expanding the ESLint configuration</h2>
-<p>If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the <a href="https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts">TS template</a> for information on how to integrate TypeScript and <a href="https://typescript-eslint.io"><code>typescript-eslint</code></a> in your project.</p></article>
+<p>This combination allows for both instant communication and persistent data storage in your CMS.</p>
+<hr>
+<h2>📁 1. Project Description</h2>
+<p>The goal of this project is to demonstrate a complete frontend + backend contact workflow:</p>
+<ul>
+<li>Visitors can submit a message via the contact form</li>
+<li>The message is sent to your email via EmailJS</li>
+<li>A copy is stored in your Strapi backend (for archive, analytics, or future reference)</li>
+</ul>
+<p>The project is modular and suitable for deployment on Netlify/Vercel (frontend) and Render/Heroku (Strapi backend).</p>
+<hr>
+<h2>🧱 2. Technical Architecture</h2>
+<p>📁 src/
+└── 📁 components/
+└── ContactForm.jsx # React component for the contact form
+📁 public/
+📁 docs/ # Auto-generated documentation (JSDoc)
+📄 jsdoc.json # JSDoc configuration
+📄 .env # Environment variables for EmailJS
+📁 strapi/ # Strapi backend project (optional)</p>
+<p><strong>Data flow:</strong></p>
+<ol>
+<li>User submits the contact form</li>
+<li><code>ContactForm.jsx</code>:
+<ul>
+<li>Sends form data to Strapi: <code>POST /api/contacts</code></li>
+<li>Sends an email using <code>emailjs.sendForm(...)</code></li>
+</ul>
+</li>
+<li>Displays success/error feedback to the user</li>
+</ol>
+<hr>
+<h2>⚙️ 3. Technologies Used</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend UI</td>
+<td>React + Tailwind CSS</td>
+</tr>
+<tr>
+<td>Contact Workflow</td>
+<td>EmailJS</td>
+</tr>
+<tr>
+<td>Backend CMS</td>
+<td>Strapi (Node.js + SQLite)</td>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>JSDoc</td>
+</tr>
+<tr>
+<td>Build Tool</td>
+<td>Vite</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>🚀 4. Installation Guide</h2>
+<h3>✅ Prerequisites</h3>
+<ul>
+<li>Node.js ≥ 18.x</li>
+<li>npm ≥ 9.x</li>
+<li>EmailJS account → <a href="https://www.emailjs.com">https://www.emailjs.com</a></li>
+<li>(Optional) Strapi CLI: <code>npm install -g create-strapi-app</code></li>
+</ul>
+<hr>
+<h3>🧪 Frontend setup</h3>
+<pre class="prettyprint source lang-bash"><code># Clone the repository
+git clone https://github.com/doniphane/monportfolioexercicestrapi
+
+# Move into the folder
+cd your-portfolio
+
+# Install dependencies
+npm install
+
+🔐 EmailJS environment variables
+Create a .env file at the root:
+
+VITE_EMAILJS_SERVICE_ID=service_b9i0uww
+VITE_EMAILJS_TEMPLATE_ID=template_flqhl4d
+VITE_EMAILJS_PUBLIC_KEY=xEc0nvhxtFPoRjWab
+
+.
+
+🗂️ Strapi setup (optional backend)
+If using Strapi for data storage:
+
+# Create your Strapi backend (if not already done)
+cd strapi/
+npm install
+npm run develop
+
+🚀 5. Deployment
+🔹 Frontend
+Use Vercel or Netlify to deploy your frontend (vite build)
+
+Set environment variables (EmailJS keys) in the platform settings
+
+🔸 Backend (Strapi)
+Deploy to Render, DigitalOcean App Platform, or Heroku
+
+Ensure permissions for contacts collection type are enabled
+
+Configure CORS to allow requests from your frontend domain
+
+🧩 6. Strapi Data Structure
+Inside your Strapi admin panel, create a collection type named contact with the following fields:
+
+Field name	Type	Required	Notes
+name	Text	✅	formData.user_name
+email	Email	✅	formData.user_email
+subject	Text	✅	formData.subject
+message	Rich Text	✅	formData.message
+date	DateTime	✅	Generated via JavaScript
+
+Make sure to allow the create permission for the Public role in Strapi → Settings → Users & Permissions → Roles.</code></pre></article>
     </section>
 
 
@@ -68,7 +191,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 02 2025 15:00:45 GMT+0400 (heure de La Réunion)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri May 02 2025 15:17:12 GMT+0400 (heure de La Réunion)
 </footer>
 
 <script> prettyPrint(); </script>

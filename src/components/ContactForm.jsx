@@ -2,32 +2,43 @@ import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 
 /**
- * Composant React pour un formulaire de contact.
- * Il permet d'envoyer un message par EmailJS et d'enregistrer les données dans Strapi.
+ * ContactForm
+ *
+ * A contact form component that allows users to send a message.
+ * On submission, it validates input, sends an email via EmailJS,
+ * and stores the message in a Strapi backend.
  *
  * @component
- * @returns {JSX.Element} Le formulaire de contact rendu
+ * @example
+ * return (
+ *   <ContactForm />
+ * )
+ *
+ * @returns {JSX.Element} The rendered contact form component
  */
 export default function ContactForm() {
-    /** Référence au formulaire HTML */
+    /**
+     * Reference to the form DOM element used by EmailJS.
+     * @type {React.MutableRefObject<HTMLFormElement>}
+     */
     const formRef = useRef();
 
-    /** État du message de confirmation ou d'erreur */
+    /**
+     * State used to store success or error messages after submission.
+     * @type {[{ success: string|null, error: string|null }, Function]}
+     */
     const [status, setStatus] = useState({
-        /** Message de succès (null si aucun) */
         success: null,
-        /** Message d'erreur (null si aucun) */
         error: null,
     });
 
     /**
-     * Gère la soumission du formulaire :
-     * - Valide les champs
-     * - Enregistre les données dans Strapi
-     * - Envoie un e-mail via EmailJS
+     * Handles the submission of the contact form.
+     * Sends the form data to both EmailJS and Strapi.
      *
      * @async
-     * @param {React.FormEvent<HTMLFormElement>} e - Événement de soumission du formulaire
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submission event
+     * @returns {Promise<void>}
      */
     const sendEmail = async (e) => {
         e.preventDefault();
@@ -39,14 +50,14 @@ export default function ContactForm() {
         const subject = formData.get('subject');
         const message = formData.get('message');
 
-        // Validation simple
+        // Basic validation
         if (!user_name || !user_email || !subject || !message) {
             setStatus({ error: 'Tous les champs sont requis.', success: null });
             return;
         }
 
         try {
-            // Enregistrement dans Strapi
+            // Send data to Strapi CMS
             const response = await fetch('http://localhost:1337/api/contacts', {
                 method: 'POST',
                 headers: {
@@ -56,16 +67,16 @@ export default function ContactForm() {
                     data: {
                         name: user_name,
                         email: user_email,
-                        subject: subject,
-                        message: message,
-                        date: new Date().toISOString(), // correspond au champ "date" dans Strapi
+                        subject,
+                        message,
+                        date: new Date().toISOString(),
                     },
                 }),
             });
 
             if (!response.ok) throw new Error("Erreur lors de l'enregistrement dans Strapi");
 
-            // Envoi du message via EmailJS
+            // Send email using EmailJS
             await emailjs.sendForm(
                 import.meta.env.VITE_EMAILJS_SERVICE_ID,
                 import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
@@ -73,8 +84,9 @@ export default function ContactForm() {
                 import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
 
+            // Success
             setStatus({ success: 'Message envoyé avec succès !', error: null });
-            form.reset(); // Réinitialise le formulaire
+            form.reset();
         } catch (err) {
             setStatus({ error: err.message || 'Une erreur est survenue.', success: null });
         }
