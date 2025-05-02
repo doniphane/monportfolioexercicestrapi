@@ -85,9 +85,9 @@ npm install
 🔐 EmailJS environment variables
 Create a .env file at the root:
 
-VITE_EMAILJS_SERVICE_ID=service_b9i0uww
-VITE_EMAILJS_TEMPLATE_ID=template_flqhl4d
-VITE_EMAILJS_PUBLIC_KEY=xEc0nvhxtFPoRjWab
+VITE_EMAILJS_SERVICE_ID=
+VITE_EMAILJS_TEMPLATE_ID=
+VITE_EMAILJS_PUBLIC_KEY=
 
 .
 
