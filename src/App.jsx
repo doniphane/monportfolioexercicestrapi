@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import CategoryFilter from '../src/components/CategoryFilter';
-
+import ContactForm from '../src/components/ContactForm';
 function App() {
   const [projets, setProjets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +38,9 @@ function App() {
 
 
         <CategoryFilter projets={projets} />
+        <br />
+        <ContactForm />
+
       </div>
     </div>
   );
